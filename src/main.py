@@ -18,6 +18,15 @@ def on_demand_tls():
 	if domain is None:
 		return "Error: domain argument is not set", 500
     
+	# Check if the domain ends in GITLAB_PAGES_DOMAIN
+	gitlab_pages_domain = os.environ.get('GITLAB_PAGES_DOMAIN')
+	is_gitlab_pages = domain == gitlab_pages_domain
+	has_no_subdomains = "." not in domain.replace(f".{gitlab_pages_domain}", "")
+	ends_with_gitlab_pages = domain.endswith(f".{gitlab_pages_domain}")
+
+	if is_gitlab_pages or (ends_with_gitlab_pages and has_no_subdomains):
+		return "", 200
+
 	# Get all the domains from the gitlab API
 	try:
 		domains = get_gitlab_pages_domains()
