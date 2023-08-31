@@ -18,6 +18,11 @@ def on_demand_tls():
 	if domain is None:
 		return "Error: domain argument is not set", 500
     
+	# Always return 200 OK when crazy mode is enabled.
+	# pls don't use this in production :D
+	if os.getenv('CRAZY_MODE', 'False').lower() == 'true':
+		return "", 200
+
 	# Check if the domain ends in GITLAB_PAGES_DOMAIN
 	gitlab_pages_domain = os.environ.get('GITLAB_PAGES_DOMAIN')
 	is_gitlab_pages = domain == gitlab_pages_domain
